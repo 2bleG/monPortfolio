@@ -15,11 +15,11 @@ try {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $lname = isset($_POST['lname']) ? $_POST['lname'] : "";
-    $fname = isset($_POST['fname']) ? $_POST['fname'] : "";
-    $phone = isset($_POST['phone']) ? $_POST['phone'] : "";
-    $email = isset($_POST['email']) ? $_POST['email'] : "";
-    $message = isset($_POST['message']) ? $_POST['message'] : "";
+    $lname = isset($_POST['lname']) ? htmlspecialchars($_POST['lname']) : "";
+    $fname = isset($_POST['fname']) ? htmlspecialchars($_POST['fname']) : "";
+    $phone = isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : "";
+    $email = isset($_POST['email']) ? htmlspecialchars($_POST['email']) : "";
+    $message = isset($_POST['message']) ? htmlspecialchars($_POST['message']) : "";
 
     if (!empty($lname) && !empty($fname) && !empty($phone) && !empty($email) && !empty($message)) {
         $requete = $bdd->prepare('INSERT INTO form (lname, fname, phone, email, message) VALUES (?, ?, ?, ?, ?)');
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <nav class="navbar">
         <div class="container">
             <a href="#about">
-                <span>Moi</span>
+                <span>À propos</span>
                 <i class="fas fa-user"></i>
             </a>
             <a href="#skills">
