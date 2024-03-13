@@ -184,7 +184,6 @@ h1 {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 17.5em;
-    height: 24.5em;
     border-radius: 0.8em;
 }
 
@@ -521,7 +520,6 @@ h1 {
 } 
 
 .dark-bg {
-    padding: 4em 0;
     background-color: #000;
 }
 
