@@ -1,3 +1,38 @@
+<?php
+$config_file = file_get_contents('data.json');
+$config = json_decode($config_file, true);
+
+$host = $config['host'];
+$dbname = $config['dbname'];
+$username = $config['username'];
+$password = $config['password'];
+
+try {
+    $bdd = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die('Erreur de connexion à la base de données : ' . $e->getMessage());
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $lname = isset($_POST['lname']) ? $_POST['lname'] : "";
+    $fname = isset($_POST['fname']) ? $_POST['fname'] : "";
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : "";
+    $email = isset($_POST['email']) ? $_POST['email'] : "";
+    $message = isset($_POST['message']) ? $_POST['message'] : "";
+
+    if (!empty($lname) && !empty($fname) && !empty($phone) && !empty($email) && !empty($message)) {
+        $requete = $bdd->prepare('INSERT INTO form (lname, fname, phone, email, message) VALUES (?, ?, ?, ?, ?)');
+        $requete->execute([$lname, $fname, $phone, $email, $message]);
+
+        header("Location: index.php");
+        exit();
+    } else {
+        $erreur = "Veuillez remplir tous les champs obligatoires.";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -5,7 +40,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/svg+xml" href="/test/imgs/logo.svg">
+    <link rel="icon" type="image/svg+xml" href="imgs/logo.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -65,7 +100,7 @@
         <div class="container">
             <div class="profile-img">
                 <div class="card">
-                    <img src="/imgs/moi.jpg"
+                    <img src="imgs/moi.jpg"
                         alt="test" class="img1">
                 </div>
             </div>
@@ -77,7 +112,7 @@
                     Passionné par le développement web, les jeux vidéo, et l’IA, je vise un diplôme de Chef de projets digitaux - Développeur Web.
                 </p>
                 <p>
-                    Mon expérience englobe la création de chatbot, l’intégration d’api, WordPress et shopify, des projets associatifs, et le développement web front-end et back-end.
+                    Mon expérience englobe la création de chatbot, l’intégration d’api, WordPress, des projets associatifs, et le développement web front-end et back-end.
                 </p>
                 <p class="dev-name">
                     OGIER Grégoire
@@ -289,11 +324,12 @@
                 </a>
             </div>
         </div>
+
         <div class="popup" id="contactPopup">
             <div class="popup-content">
                 <span class="close-popup" onclick="closePopup()">&times;</span>
                 <h2>Me contacter</h2>
-                <form>
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
                     <div class="leftForm">
                         <label for="fname">Nom</label>
                         <input type="text" id="fname" name="fname" required>
@@ -315,6 +351,7 @@
                 </form>
             </div>
         </div>
+        
         <div class="dark-bg">
             <div class="container">
                 <div class="social-media">
